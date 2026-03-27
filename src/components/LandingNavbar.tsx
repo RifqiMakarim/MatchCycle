@@ -39,14 +39,14 @@ export function LandingNavbar() {
           {/* Logo - Left Side */}
           <Link href="/" className="flex items-center gap-2 group">
             <div className={`h-8 w-8 rounded-lg flex items-center justify-center transition-colors ${
-                isScrolled ? "bg-white text-green-600" : "bg-white text-green-600"
+                isScrolled ? "bg-white text-blue-600" : "bg-white text-blue-600"
             }`}>
-              <img src="/logo-matchgate.png" alt="logo-matchgate" className="h-6 w-6" />
+              <img src="/logo-EcoMatch.jpeg" alt="logo-EcoMatch" className="h-8 w-8 rounded-lg" />
             </div>
             <span className={`font-bold text-xl tracking-tight transition-colors ${
                 isScrolled ? "text-slate-900" : "text-white"
             }`}>
-              <span className="text-[#00A63E]">Match</span><span className="text-orange-400">Gate</span>
+              <span className="text-blue-400">Eco</span><span className="text-blue-400">Match</span>
             </span>
           </Link>
 
@@ -56,7 +56,7 @@ export function LandingNavbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className={`text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95 hover:text-green-500 ${
+                className={`text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95 hover:text-blue-500 ${
                     isScrolled ? "text-slate-600" : "text-white/90"
                 }`}
               >
@@ -68,8 +68,8 @@ export function LandingNavbar() {
                     size="sm" 
                     className={`rounded-full px-6 transition-all hover:scale-105 active:scale-95 duration-200 ${
                         isScrolled 
-                            ? "bg-green-600 hover:bg-green-700 text-white" 
-                            : "bg-white text-green-900 hover:bg-green-50"
+                            ? "bg-blue-600 hover:bg-blue-700 text-white" 
+                            : "bg-white text-blue-900 hover:bg-blue-50"
                     }`}
                 >
                     Masuk
@@ -112,7 +112,7 @@ export function LandingNavbar() {
                 </Link>
               ))}
                 <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-                    <Button className="w-full bg-green-600 mt-2">Masuk</Button>
+                    <Button className="w-full bg-blue-600 mt-2">Masuk</Button>
                 </Link>
             </div>
           </motion.div>

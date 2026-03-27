@@ -24,7 +24,7 @@ type MatchmakingPartner = RegionalEntity & {
   mapLng: number;
 };
 
-export function MatchmakingPanel({ userRole, onClose, location = "Jakarta" }: { userRole: string, onClose: () => void, location?: string }) {
+export function MatchmakingPanel({ userRole, onClose, location = "Slawi" }: { userRole: string, onClose: () => void, location?: string }) {
   const [selectedPartner, setSelectedPartner] = useState<MatchmakingPartner | null>(null);
   const [step, setStep] = useState<"search" | "negotiate" | "waiting" | "success">("search");
   
@@ -172,7 +172,7 @@ export function MatchmakingPanel({ userRole, onClose, location = "Jakarta" }: { 
                                             </div>
                                             <p className="text-xs text-muted-foreground mt-1">{partner.stock}</p>
                                             <div className="mt-2 flex items-center gap-2">
-                                                <span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">Verified</span>
+                                                <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">Verified</span>
                                                 <Badge variant="secondary" className="text-[10px] h-5">{partner.category}</Badge>
                                             </div>
                                         </div>
@@ -238,7 +238,7 @@ export function MatchmakingPanel({ userRole, onClose, location = "Jakarta" }: { 
                                 {/* Custom Fields for Specific Roles */}
                                 {selectedPartner.role === "peternak_manggot" && (
                                     <div className="space-y-2 pt-2 border-t">
-                                        <Label className="text-green-600 font-semibold">Pesanan Maggot</Label>
+                                        <Label className="text-blue-600 font-semibold">Pesanan Maggot</Label>
                                         <div className="space-y-2">
                                             <Label>Jumlah (Kg)</Label>
                                             <Input 
@@ -253,7 +253,7 @@ export function MatchmakingPanel({ userRole, onClose, location = "Jakarta" }: { 
 
                                 {selectedPartner.role === "peternak_hewan" && (
                                     <div className="space-y-2 pt-2 border-t">
-                                        <Label className="text-green-600 font-semibold">Pesanan Produk Ternak</Label>
+                                        <Label className="text-blue-600 font-semibold">Pesanan Produk Ternak</Label>
                                         <div className="space-y-2">
                                             <Label>Produk Hasil Ternak</Label>
                                             <Input 
@@ -292,8 +292,8 @@ export function MatchmakingPanel({ userRole, onClose, location = "Jakarta" }: { 
                             <span className="text-sm font-medium flex items-center gap-2">
                                 <MessageSquare className="h-4 w-4" /> Live Chat
                             </span>
-                            <span className="text-xs text-green-600 flex items-center gap-1">
-                                <span className="h-2 w-2 bg-green-500 rounded-full translate-y-[1px]"></span> Online
+                            <span className="text-xs text-blue-600 flex items-center gap-1">
+                                <span className="h-2 w-2 bg-blue-500 rounded-full translate-y-[1px]"></span> Online
                             </span>
                         </div>
                         
@@ -369,7 +369,7 @@ export function MatchmakingPanel({ userRole, onClose, location = "Jakarta" }: { 
                                         </div>
                                         <div className="flex justify-between items-center border-b pb-4">
                                             <span className="text-muted-foreground">Estimasi Biaya</span>
-                                            <span className="font-bold text-green-600 text-lg">
+                                            <span className="font-bold text-blue-600 text-lg">
                                                 Rp {(parseInt(transactionDetails.quantity) * 5000).toLocaleString('id-ID')}
                                             </span>
                                         </div>
@@ -377,7 +377,7 @@ export function MatchmakingPanel({ userRole, onClose, location = "Jakarta" }: { 
                                 ) : (
                                     <div className="flex justify-between items-center border-b pb-4">
                                         <span className="text-muted-foreground">Estimasi Biaya</span>
-                                        <span className="font-bold text-green-600 text-lg">Rp 25.000</span>
+                                        <span className="font-bold text-blue-600 text-lg">Rp 25.000</span>
                                     </div>
                                 )}
 
@@ -401,18 +401,18 @@ export function MatchmakingPanel({ userRole, onClose, location = "Jakarta" }: { 
                 <div className="flex-1 overflow-y-auto w-full animate-in zoom-in-95 duration-500">
                     <div className="flex flex-col items-center justify-center min-h-full p-8 pb-20 text-center space-y-8">
                         
-                        <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center shadow-sm">
-                            <CheckCircle2 className="h-12 w-12 text-green-600" />
+                        <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center shadow-sm">
+                            <CheckCircle2 className="h-12 w-12 text-blue-600" />
                         </div>
                         
                         <div className="space-y-2">
-                            <h2 className="text-3xl font-bold text-green-600">Transaksi Selesai!</h2>
+                            <h2 className="text-3xl font-bold text-blue-600">Transaksi Selesai!</h2>
                             <p className="text-muted-foreground text-lg max-w-md mx-auto">
                                 Terima kasih telah berkontribusi pada sirkular ekonomi.
                             </p>
                         </div>
                         
-                        <Card className="w-full max-w-sm border-2 border-green-100 shadow-md bg-white">
+                        <Card className="w-full max-w-sm border-2 border-blue-100 shadow-md bg-white">
                             <CardContent className="p-6 space-y-6">
                                 <div className="space-y-1 pb-4 border-b border-dashed">
                                     <div className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">Rincian Transaksi</div>
@@ -438,12 +438,12 @@ export function MatchmakingPanel({ userRole, onClose, location = "Jakarta" }: { 
                                          </div>
                                      )}
                                      
-                                     <div className="flex justify-between items-center text-left bg-green-50 p-3 rounded-lg border border-green-100">
+                                     <div className="flex justify-between items-center text-left bg-blue-50 p-3 rounded-lg border border-blue-100">
                                         <div className="flex items-center gap-2">
-                                            <Badge variant="default" className="bg-green-600 hover:bg-green-700">XP</Badge>
-                                            <span className="text-sm font-medium text-green-800">Poin Earned</span>
+                                            <Badge variant="default" className="bg-blue-600 hover:bg-blue-700">XP</Badge>
+                                            <span className="text-sm font-medium text-blue-800">Poin Earned</span>
                                         </div>
-                                        <span className="font-bold text-xl text-green-700">+120</span>
+                                        <span className="font-bold text-xl text-blue-700">+120</span>
                                      </div>
                                 </div>
 

@@ -44,10 +44,10 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-xl border-t-4 border-t-primary">
         <CardHeader className="text-center space-y-4">
           <div className="mx-auto bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center">
-             <img src="/logo-matchgate.png" alt="logo matchgate" />
+             <img src="/logo-EcoMatch.jpeg" alt="logo EcoMatch" />
           </div>
           <div>
-            <CardTitle className="text-2xl font-bold">MatchGate Access</CardTitle>
+            <CardTitle className="text-2xl font-bold">EcoMatch Access</CardTitle>
             <CardDescription>Masuk untuk memonitor limbah dan dampak sirkular.</CardDescription>
           </div>
         </CardHeader>
@@ -68,7 +68,7 @@ export default function LoginPage() {
             </div>
             <div className="space-y-2">
                 <Label htmlFor="email">Email Dinas / Instansi</Label>
-                <Input id="email" placeholder="contoh@matchgate.id" type="email" required />
+                <Input id="email" placeholder="contoh@EcoMatch.id" type="email" required />
             </div>
             <div className="space-y-2 pb-6">
                 <div className="flex justify-between items-center">
@@ -87,7 +87,7 @@ export default function LoginPage() {
       </Card>
       
       <div className="absolute bottom-4 text-center text-xs text-muted-foreground">
-        &copy; 2026 MatchGate System. Secure Login.
+        &copy; 2026 EcoMatch System. Secure Login.
       </div>
     </div>
   );

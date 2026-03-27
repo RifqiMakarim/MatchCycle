@@ -29,8 +29,8 @@ export default function ProfilePage() {
     if (isSppg) {
       entity = REGIONAL_ENTITIES.find(e => e.role === "sppg");
     } else if (isSchool) {
-       // Prioritize Jakarta schools as requested
-       entity = REGIONAL_ENTITIES.find(e => e.role === "sekolah" && e.city === "Jakarta") || 
+       // Prioritize Slawi schools as requested
+       entity = REGIONAL_ENTITIES.find(e => e.role === "sekolah" && e.city === "Slawi") || 
                 REGIONAL_ENTITIES.find(e => e.role === "sekolah");
     } else {
         // Map other roles
@@ -49,7 +49,7 @@ export default function ProfilePage() {
             type: "Administrator",
             email: "admin@matchgate.id",
             phone: "+62 812-3456-7890",
-            location: "Jakarta, Indonesia",
+            location: "Slawi, Tegal, Indonesia",
             capacityLabel: "Role",
             capacityValue: "Super Admin",
             icon: Building,
@@ -147,7 +147,7 @@ export default function ProfilePage() {
                                     </li>
                                     <li className="flex justify-between">
                                         <span>Status Akun</span>
-                                        <Badge variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-100">Verified Partner</Badge>
+                                        <Badge variant="secondary" className="bg-blue-100 text-blue-700 hover:bg-blue-100">Verified Partner</Badge>
                                     </li>
                                 </ul>
                             </CardContent>

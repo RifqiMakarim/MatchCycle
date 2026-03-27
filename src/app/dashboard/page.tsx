@@ -38,7 +38,7 @@ export default function DashboardPage() {
   const [userRole, setUserRole] = useState("admin");
   const [showMatchmaking, setShowMatchmaking] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState("Jakarta");
+  const [selectedLocation, setSelectedLocation] = useState("Slawi");
   const [displayedData, setDisplayedData] = useState<RegionalEntity[]>([]);
 
   // New state for dynamic dashboard data
@@ -77,18 +77,18 @@ export default function DashboardPage() {
       {/* Dashboard Header */}
       <header className="sticky top-0 z-40 w-full border-b bg-white dark:bg-slate-900 px-6 py-3 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2">
-          <img src="/logo-matchgate.png" alt="Logo MatchGate" className="h-6 w-6 text-primary" />
+          <img src="/logo-EcoMatch.jpeg" alt="Logo EcoMatch" className="h-6 w-6 text-primary" />
           <span className="font-bold text-lg hidden sm:inline-block">
-            MatchGate <span className="text-muted-foreground font-normal">| Monitoring</span>
+            EcoMatch <span className="text-muted-foreground font-normal">| Monitoring</span>
           </span>
         </div>
 
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-white border rounded-full text-sm font-medium shadow-sm">
             <div className={`h-2 w-2 rounded-full animate-pulse ${
-              selectedLocation === "Jakarta" ? "bg-green-600" :
-              selectedLocation === "Surabaya" ? "bg-blue-600" :
-              selectedLocation === "Semarang" ? "bg-orange-600" : "bg-purple-600"
+              selectedLocation === "Slawi" ? "bg-blue-600" :
+              selectedLocation === "Adiwerna" ? "bg-blue-600" :
+              selectedLocation === "Talang" ? "bg-orange-600" : "bg-purple-600"
             }`} />
             <select
               value={selectedLocation}
@@ -292,7 +292,7 @@ export default function DashboardPage() {
                                     : item.status === "Proses Penjemputan"
                                     ? "bg-blue-100 text-blue-800"
                                     : item.status === "Aktif"
-                                    ? "bg-green-100 text-green-800 border-transparent"
+                                    ? "bg-blue-100 text-blue-800 border-transparent"
                                     : "bg-slate-100"
                                 }
                               >

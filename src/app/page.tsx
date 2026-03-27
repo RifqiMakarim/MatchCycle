@@ -50,14 +50,14 @@ export default function LandingPage() {
             </motion.div>
             <motion.h1 variants={fadeInUp} className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight">
                 Ubah Sisa Pangan MBG <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-300">Menjadi Ekonomi Sirkular</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-300">Menjadi Ekonomi Sirkular</span>
             </motion.h1>
             <motion.p variants={fadeInUp} className="max-w-2xl mx-auto text-lg md:text-xl text-slate-200">
-                MatchGate menghubungkan penyedia sisa pangan hasil <strong>Makanan Bergizi Gratis (MBG)</strong>, peternak maggot, peternak hewan dan industri energi untuk menciptakan ekonomi sirkular yang berkelanjutan.
+                EcoMatch menghubungkan penyedia sisa pangan hasil <strong>Makanan Bergizi Gratis (MBG)</strong>, peternak maggot, peternak hewan dan industri energi untuk menciptakan ekonomi sirkular yang berkelanjutan.
             </motion.p>
             <motion.div variants={fadeInUp} className="pt-8 flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/login">
-                    <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white rounded-full px-8 h-12 text-base shadow-lg hover:shadow-green-500/25 transition-all hover:scale-105 active:scale-95 duration-200">
+                    <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-8 h-12 text-base shadow-lg hover:shadow-blue-500/25 transition-all hover:scale-105 active:scale-95 duration-200">
                         Mulai Sekarang
                     </Button>
                 </Link>
@@ -91,7 +91,7 @@ export default function LandingPage() {
               >
                   <motion.div variants={fadeInUp} className="space-y-6">
                       <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
-                          Mencapai Target <span className="text-green-600">SDGs 2030</span>
+                          Mencapai Target <span className="text-blue-600">SDGs 2030</span>
                       </h2>
                       <p className="text-lg text-slate-600 leading-relaxed">
                           Sistem ini dirancang untuk mendukung program Makan Bergizi Gratis (MBG) dengan memastikan 
@@ -100,8 +100,8 @@ export default function LandingPage() {
                       
                       <div className="space-y-4 pt-4">
                           <div className="flex gap-4">
-                              <div className="h-12 w-12 rounded-xl bg-green-100 flex items-center justify-center shrink-0">
-                                  <Recycle className="h-6 w-6 text-green-600" />
+                              <div className="h-12 w-12 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+                                  <Recycle className="h-6 w-6 text-blue-600" />
                               </div>
                               <div>
                                   <h3 className="font-bold text-lg">Zero Waste to Landfill</h3>
@@ -166,8 +166,8 @@ export default function LandingPage() {
                 variants={fadeInUp}
                 className="text-center max-w-3xl mx-auto mb-16"
               >
-                  <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Ekosistem Sirkular MatchGate</h2>
-                  <p className="text-white">Integrasi MatchGate dalam menjaga keberlanjutan siklus pangan program makanan bergizi gratis.</p>
+                  <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Ekosistem Sirkular EcoMatch</h2>
+                  <p className="text-white">Integrasi EcoMatch dalam menjaga keberlanjutan siklus pangan program makanan bergizi gratis.</p>
               </motion.div>
 
               {/* FLOW DIAGRAM 2x2 Grid */}
@@ -181,14 +181,14 @@ export default function LandingPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative">
                        
                        {/* NODE 1: SOURCE */}
-                       <motion.div variants={fadeInUp} className="bg-white p-8 rounded-2xl shadow-lg border border-slate-100 hover:border-green-500 transition-all hover:shadow-xl group h-full flex flex-col items-center text-center">
-                           <div className="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center mb-4 group-hover:bg-green-100 transition-colors">
-                               <Recycle className="h-8 w-8 text-green-600" />
+                       <motion.div variants={fadeInUp} className="bg-white p-8 rounded-2xl shadow-lg border border-slate-100 hover:border-blue-500 transition-all hover:shadow-xl group h-full flex flex-col items-center text-center">
+                           <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
+                               <Recycle className="h-8 w-8 text-blue-600" />
                            </div>
                            <h3 className="font-bold text-lg mb-2">1. Sumber Limbah</h3>
                            <div className="text-sm font-medium text-slate-500 mb-1">Mitra Sisa Pangan</div>
                            <p className="text-xs text-slate-400">Bersumber dari sekolah dan SPPG yang melayani Makanan Bergizi Gratis</p>
-                           <div className="mt-4 px-3 py-1 bg-green-50 text-green-700 text-xs rounded-full">Sisa Makanan</div>
+                           <div className="mt-4 px-3 py-1 bg-blue-50 text-blue-700 text-xs rounded-full">Sisa Makanan</div>
                        </motion.div>
 
                        {/* NODE 2: PROCESSOR */}
@@ -251,7 +251,7 @@ export default function LandingPage() {
                             <img src="/BerandaManggot.png" alt="BerandaManggot" />
                        </div>
                        {/* Decorative blobs */}
-                       <div className="absolute -top-10 -right-10 w-64 h-64 bg-green-500/20 rounded-full blur-3xl -z-10"></div>
+                       <div className="absolute -top-10 -right-10 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl -z-10"></div>
                        <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl -z-10"></div>
                    </motion.div>
 
@@ -259,10 +259,10 @@ export default function LandingPage() {
                    <motion.div variants={fadeInUp} className="flex-1 space-y-8">
                        <h2 className="text-3xl md:text-5xl font-bold leading-tight">
                            Kelola Limbah <br/>
-                           <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400">Dalam Genggaman</span>
+                           <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-400">Dalam Genggaman</span>
                        </h2>
                        <p className="text-slate-400 text-lg">
-                           Pantau, jemput, dan kelola transaksi limbah organik Anda secara real-time hanya melalui satu aplikasi mobile MatchGate.
+                           Pantau, jemput, dan kelola transaksi limbah organik Anda secara real-time hanya melalui satu aplikasi mobile EcoMatch.
                        </p>
                        
                        <ul className="space-y-4">
@@ -273,7 +273,7 @@ export default function LandingPage() {
                                "Transaksi Aman di Tempat"
                            ].map((item, i) => (
                                <li key={i} className="flex items-center gap-3">
-                                   <CheckCircle2 className="h-6 w-6 text-green-500 shrink-0" />
+                                   <CheckCircle2 className="h-6 w-6 text-blue-500 shrink-0" />
                                    <span className="text-lg">{item}</span>
                                </li>
                            ))}
@@ -282,7 +282,7 @@ export default function LandingPage() {
                        <div className="pt-4 flex gap-6 items-center">
                            <img src="/download-playstore.png" alt="download-playstore" className="h-20 hover:scale-105 active:scale-95 duration-200 cursor-pointer" />
                               
-                              <Button size="lg" className="bg-green-500 text-white hover:bg-green-600 rounded-xl h-14 px-6 transition-all hover:scale-105 active:scale-95 duration-200">
+                              <Button size="lg" className="bg-blue-500 text-white hover:bg-blue-600 rounded-xl h-14 px-6 transition-all hover:scale-105 active:scale-95 duration-200">
                                   <a href="https://www.figma.com/proto/dcrgDBdLXAPYbg3MhTBFgL/LOMBA-BANDUNG?page-id=0%3A1&node-id=27-278&p=f&viewport=282%2C-390%2C0.34&t=uC72KklrnUKhp570-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=1%3A3" target="_blank" className="flex items-center">
                                   <Play className="mr-2 h-5 w-5 fill-current" /> Demo Aplikasi
                                   </a>
@@ -304,10 +304,10 @@ export default function LandingPage() {
                 className="text-center max-w-3xl mx-auto mb-16"
               >
                   <motion.h2 variants={fadeInUp} className="text-3xl md:text-5xl font-bold mb-6 text-slate-900">
-                      Mengapa Ini Adalah <span className="text-green-600">Solusi?</span>
+                      Mengapa Ini Adalah <span className="text-blue-600">Solusi?</span>
                   </motion.h2>
                   <motion.p variants={fadeInUp} className="text-lg text-slate-600">
-                      Inovasi MatchGate menjawab tantangan global dengan pendekatan lokal yang berdampak nyata.
+                      Inovasi EcoMatch menjawab tantangan global dengan pendekatan lokal yang berdampak nyata.
                   </motion.p>
               </motion.div>
 
@@ -320,7 +320,7 @@ export default function LandingPage() {
                     viewport={{ once: true }}
                     className="bg-white rounded-3xl overflow-hidden shadow-xl border border-slate-100 hover:shadow-2xl transition-all hover:-translate-y-2 group"
                   >
-                      <div className="h-48 overflow-hidden bg-green-50 relative">
+                      <div className="h-48 overflow-hidden bg-blue-50 relative">
                           <img src="/food_waste_pile.png" alt="Tantangan Food Waste" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-60"></div>
                       </div>
@@ -376,7 +376,7 @@ export default function LandingPage() {
       </section>
 
       {/* 5. CTA SECTION */}
-      <section className="py-24 bg-gradient-to-b from-white to-green-50">
+      <section className="py-24 bg-gradient-to-b from-white to-blue-50">
           <motion.div 
             initial="hidden"
             whileInView="visible"
@@ -390,7 +390,7 @@ export default function LandingPage() {
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
                   <Link href="/login">
-                      <Button size="lg" className="w-full sm:w-auto px-10 h-14 text-lg rounded-full shadow-xl shadow-green-600/20 transition-all hover:scale-105 active:scale-95 duration-200">
+                      <Button size="lg" className="w-full sm:w-auto px-10 h-14 text-lg rounded-full shadow-xl shadow-blue-600/20 transition-all hover:scale-105 active:scale-95 duration-200">
                           Masuk Dashboard
                       </Button>
                   </Link>
@@ -404,7 +404,7 @@ export default function LandingPage() {
       {/* FOOTER */}
       <footer className="py-8 bg-white border-t text-center text-slate-500 text-sm">
           <div className="container mx-auto px-4">
-              <p>&copy; {new Date().getFullYear()} MatchGate System. Hak Cipta Dilindungi.</p>
+              <p>&copy; {new Date().getFullYear()} EcoMatch System. Hak Cipta Dilindungi.</p>
               <p className="mt-2"></p>
           </div>
       </footer>
