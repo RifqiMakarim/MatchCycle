@@ -77,9 +77,9 @@ export default function DashboardPage() {
       {/* Dashboard Header */}
       <header className="sticky top-0 z-40 w-full border-b bg-white dark:bg-slate-900 px-6 py-3 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2">
-          <img src="/logo-EcoMatch.jpeg" alt="Logo EcoMatch" className="h-6 w-6 text-primary" />
+          <img src="/logo-MatchCycle.jpeg" alt="Logo MatchCycle" className="h-6 w-6 text-primary" />
           <span className="font-bold text-lg hidden sm:inline-block">
-            EcoMatch <span className="text-muted-foreground font-normal">| Monitoring</span>
+            MatchCycle <span className="text-muted-foreground font-normal">| Monitoring</span>
           </span>
         </div>
 

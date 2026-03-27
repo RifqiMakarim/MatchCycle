@@ -53,7 +53,7 @@ export default function LandingPage() {
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-300">Menjadi Ekonomi Sirkular</span>
             </motion.h1>
             <motion.p variants={fadeInUp} className="max-w-2xl mx-auto text-lg md:text-xl text-slate-200">
-                EcoMatch menghubungkan penyedia sisa pangan hasil <strong>Makanan Bergizi Gratis (MBG)</strong>, peternak maggot, peternak hewan dan industri energi untuk menciptakan ekonomi sirkular yang berkelanjutan.
+                MatchCycle menghubungkan penyedia sisa pangan hasil <strong>Makanan Bergizi Gratis (MBG)</strong>, peternak maggot, peternak hewan dan industri energi untuk menciptakan ekonomi sirkular yang berkelanjutan.
             </motion.p>
             <motion.div variants={fadeInUp} className="pt-8 flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/login">
@@ -166,8 +166,8 @@ export default function LandingPage() {
                 variants={fadeInUp}
                 className="text-center max-w-3xl mx-auto mb-16"
               >
-                  <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Ekosistem Sirkular EcoMatch</h2>
-                  <p className="text-white">Integrasi EcoMatch dalam menjaga keberlanjutan siklus pangan program makanan bergizi gratis.</p>
+                  <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Ekosistem Sirkular MatchCycle</h2>
+                  <p className="text-white">Integrasi MatchCycle dalam menjaga keberlanjutan siklus pangan program makanan bergizi gratis.</p>
               </motion.div>
 
               {/* FLOW DIAGRAM 2x2 Grid */}
@@ -262,7 +262,7 @@ export default function LandingPage() {
                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-400">Dalam Genggaman</span>
                        </h2>
                        <p className="text-slate-400 text-lg">
-                           Pantau, jemput, dan kelola transaksi limbah organik Anda secara real-time hanya melalui satu aplikasi mobile EcoMatch.
+                           Pantau, jemput, dan kelola transaksi limbah organik Anda secara real-time hanya melalui satu aplikasi mobile MatchCycle.
                        </p>
                        
                        <ul className="space-y-4">
@@ -307,7 +307,7 @@ export default function LandingPage() {
                       Mengapa Ini Adalah <span className="text-blue-600">Solusi?</span>
                   </motion.h2>
                   <motion.p variants={fadeInUp} className="text-lg text-slate-600">
-                      Inovasi EcoMatch menjawab tantangan global dengan pendekatan lokal yang berdampak nyata.
+                      Inovasi MatchCycle menjawab tantangan global dengan pendekatan lokal yang berdampak nyata.
                   </motion.p>
               </motion.div>
 
@@ -404,7 +404,7 @@ export default function LandingPage() {
       {/* FOOTER */}
       <footer className="py-8 bg-white border-t text-center text-slate-500 text-sm">
           <div className="container mx-auto px-4">
-              <p>&copy; {new Date().getFullYear()} EcoMatch System. Hak Cipta Dilindungi.</p>
+              <p>&copy; {new Date().getFullYear()} MatchCycle System. Hak Cipta Dilindungi.</p>
               <p className="mt-2"></p>
           </div>
       </footer>

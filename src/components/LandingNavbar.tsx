@@ -41,12 +41,12 @@ export function LandingNavbar() {
             <div className={`h-8 w-8 rounded-lg flex items-center justify-center transition-colors ${
                 isScrolled ? "bg-white text-blue-600" : "bg-white text-blue-600"
             }`}>
-              <img src="/logo-EcoMatch.jpeg" alt="logo-EcoMatch" className="h-8 w-8 rounded-lg" />
+              <img src="/logo-MatchCycle.jpeg" alt="logo-MatchCycle" className="h-8 w-8 rounded-lg" />
             </div>
             <span className={`font-bold text-xl tracking-tight transition-colors ${
                 isScrolled ? "text-slate-900" : "text-white"
             }`}>
-              <span className="text-blue-400">Eco</span><span className="text-blue-400">Match</span>
+              <span className="text-blue-400">Match</span><span className="text-blue-400">Cycle</span>
             </span>
           </Link>
 
