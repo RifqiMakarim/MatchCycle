@@ -50,13 +50,21 @@ export function MatchmakingPanel({ userRole, onClose, location = "Slawi" }: { us
          return ["sppg", "sekolah", "mitra_sisa_pangan", "mitra_sisa_pangan_sppg", "mitra_sisa_pangan_sekolah", "peternak_hewan"].includes(p.role);
     }
     return true; // Admin sees all
-  }).map(p => ({
-      ...p,
-      distance: "2.5 km", // Mock distance
-      // Project lat/lng to % for the map simulation (simple projection relative to city center)
-      mapLat: 50 + (p.lat - (CITY_COORDINATES[location]?.lat || 0)) * 350, 
-      mapLng: 50 + (p.lng - (CITY_COORDINATES[location]?.lng || 0)) * 350
-  }));
+  }).map((p, index) => {
+      // Spread partners out using a larger multiplier and add radial jitter to avoid crowding
+      const baseLat = 50 + (p.lat - (CITY_COORDINATES[location]?.lat || 0)) * 3500; 
+      const baseLng = 50 + (p.lng - (CITY_COORDINATES[location]?.lng || 0)) * 3500;
+      
+      const angle = index * (Math.PI * 2 / 5);
+      const jitterRadius = 12 + (index % 3) * 5; // To make sure they are scattered away from each other and center
+      
+      return {
+          ...p,
+          distance: (1.2 + (index % 4) * 0.7).toFixed(1) + " km", 
+          mapLat: baseLat + Math.sin(angle) * jitterRadius,
+          mapLng: baseLng + Math.cos(angle) * jitterRadius
+      };
+  });
 
   const handleConnect = (partner: any) => {
     setSelectedPartner(partner);
@@ -126,8 +134,14 @@ export function MatchmakingPanel({ userRole, onClose, location = "Slawi" }: { us
                 <div className="flex-1 grid md:grid-cols-2 h-full overflow-hidden">
                     {/* Map Simulation */}
                     <div className="bg-slate-100 dark:bg-slate-900 relative h-[300px] md:h-full flex items-center justify-center overflow-hidden border-b md:border-b-0 md:border-r">
-                        {/* Fake Map Background */}
-                        <div className="absolute inset-0 opacity-10" style={{ 
+                        {/* Dynamic Map Background */}
+                        <div 
+                          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-50 dark:opacity-40" 
+                          style={{ backgroundImage: `url('/map-${location.toLowerCase()}.jpeg')` }}
+                        ></div>
+                        
+                        {/* Fake Map Grid Overlay */}
+                        <div className="absolute inset-0 opacity-10 pointer-events-none mix-blend-overlay" style={{ 
                             backgroundImage: "radial-gradient(#444 1px, transparent 1px)", 
                             backgroundSize: "20px 20px" 
                         }}></div>
