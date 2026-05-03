@@ -16,12 +16,20 @@ const INITIAL_CHATS = [
 ];
 
 import { REGIONAL_ENTITIES, CITY_COORDINATES, RegionalEntity, EntityRole } from "@/lib/regional-data";
+import { supabase } from "@/lib/supabaseClient";
 
-
-type MatchmakingPartner = RegionalEntity & {
+type MatchmakingPartner = {
+  id: string;
+  name: string;
+  role: string;
+  category: string;
+  stock: string;
+  avatar: string;
   distance: string;
   mapLat: number;
   mapLng: number;
+  lat?: number;
+  lng?: number;
 };
 
 export function MatchmakingPanel({ userRole, onClose, location = "Slawi" }: { userRole: string, onClose: () => void, location?: string }) {
@@ -35,36 +43,136 @@ export function MatchmakingPanel({ userRole, onClose, location = "Slawi" }: { us
   const [transactionDetails, setTransactionDetails] = useState<{ quantity: string, productType: string }>({ quantity: "", productType: "" });
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Filter partners based on user role and location
-  const relevantPartners = REGIONAL_ENTITIES.filter(p => {
-    // 1. Filter by Location
-    if (p.city !== location) return false;
+  const [partners, setPartners] = useState<MatchmakingPartner[]>([]);
+  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-    // 2. Filter by Role Matching logic
-    // User is Supplier (SPPG/School) -> Sees Consumers (Maggot, Hewan, Energy)
-    if (["mitra_sisa_pangan", "mitra_sisa_pangan_sppg", "mitra_sisa_pangan_sekolah", "sppg", "sekolah", "school"].some(r => userRole.includes(r))) {
-        return ["peternak_manggot", "mitra_energy", "waste_to_energy", "peternak_hewan"].includes(p.role);
-    }
-    // User is Maggot -> Sees Suppliers (SPPG, School, Hewan sometimes?) or Consumers? Assuming Maggot needs waste.
-    if (userRole === "peternak_manggot") {
-         return ["sppg", "sekolah", "mitra_sisa_pangan", "mitra_sisa_pangan_sppg", "mitra_sisa_pangan_sekolah", "peternak_hewan"].includes(p.role);
-    }
-    return true; // Admin sees all
-  }).map((p, index) => {
-      // Spread partners out using a larger multiplier and add radial jitter to avoid crowding
-      const baseLat = 50 + (p.lat - (CITY_COORDINATES[location]?.lat || 0)) * 3500; 
-      const baseLng = 50 + (p.lng - (CITY_COORDINATES[location]?.lng || 0)) * 3500;
+  // Generate a unique dummy user ID ONCE per component mount to prevent duplicates in Strict Mode
+  const dummyUserIdRef = useRef<string | null>(null);
+  if (!dummyUserIdRef.current) {
+      dummyUserIdRef.current = typeof crypto !== 'undefined' && crypto.randomUUID 
+        ? crypto.randomUUID() 
+        : Math.random().toString(36).substring(2, 15);
+  }
+  const dummyUserId = dummyUserIdRef.current;
+
+  // Initialize Matchmaking
+  useEffect(() => {
+    let subscription: any;
+
+    const initMatchmaking = async () => {
+      setIsLoading(true);
       
-      const angle = index * (Math.PI * 2 / 5);
-      const jitterRadius = 12 + (index % 3) * 5; // To make sure they are scattered away from each other and center
-      
-      return {
-          ...p,
-          distance: (1.2 + (index % 4) * 0.7).toFixed(1) + " km", 
-          mapLat: baseLat + Math.sin(angle) * jitterRadius,
-          mapLng: baseLng + Math.cos(angle) * jitterRadius
-      };
-  });
+      // 1. Get Real Location
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          setUserLocation({ lat, lng });
+
+          // 2. Register/Upsert to Supabase
+          const mockNames: Record<string, string> = {
+            sppg: "Bank Sampah SPPG",
+            peternak_manggot: "Peternak Maggot Sejahtera",
+            mitra_sisa_pangan: "Mitra Sisa Pangan",
+            sekolah: "Sekolah Peduli Lingkungan",
+            peternak_hewan: "Peternak Unggas Lokal",
+            waste_to_energy: "Pusat Bio-Energi"
+          };
+          const userName = mockNames[userRole] || `Mitra ${userRole.replace(/_/g, ' ')}`;
+
+          const { error: upsertError } = await supabase.from("active_matchmaking").upsert({
+             user_id: dummyUserId,
+             name: userName,
+             role: userRole,
+             category: "Umum",
+             location: `POINT(${lng} ${lat})`,
+             status: 'searching'
+          });
+
+          if (upsertError) {
+              console.error("Error upserting location:", upsertError.message || JSON.stringify(upsertError));
+          }
+
+          // Determine Target Roles
+          let targetRoles: string[] = [];
+          if (["mitra_sisa_pangan", "mitra_sisa_pangan_sppg", "mitra_sisa_pangan_sekolah", "sppg", "sekolah", "school"].some(r => userRole.includes(r))) {
+              targetRoles = ["peternak_manggot", "mitra_energy", "waste_to_energy", "peternak_hewan"];
+          } else if (userRole === "peternak_manggot") {
+              targetRoles = ["sppg", "sekolah", "mitra_sisa_pangan", "mitra_sisa_pangan_sppg", "mitra_sisa_pangan_sekolah", "peternak_hewan"];
+          } else {
+              targetRoles = ["sppg", "sekolah", "peternak_manggot", "peternak_hewan", "mitra_sisa_pangan"];
+          }
+
+          // 3. Fetch Nearest Partners
+          const fetchPartners = async () => {
+            const { data, error } = await supabase.rpc("find_nearest_partners", {
+              user_lat: lat,
+              user_lng: lng,
+              search_radius_meters: 15000, // Search within 15 km
+              target_roles: targetRoles
+            });
+
+            if (error) {
+               console.error("Error fetching partners:", error);
+               return;
+            }
+
+            if (data) {
+               // Filter out current user's ID just in case
+               const filteredData = data.filter((p: any) => p.id !== dummyUserId);
+               const mapped = filteredData.map((p: any, index: number) => {
+                  const angle = index * (Math.PI * 2 / 5);
+                  const jitterRadius = 12 + (index % 3) * 5;
+                  return {
+                     id: p.id,
+                     name: p.name,
+                     role: p.role,
+                     category: p.category || "General",
+                     stock: p.stock || "Tersedia",
+                     avatar: p.name.substring(0, 2).toUpperCase(),
+                     distance: (p.distance / 1000).toFixed(1) + " km",
+                     mapLat: 50 + Math.sin(angle) * jitterRadius,
+                     mapLng: 50 + Math.cos(angle) * jitterRadius,
+                     lat: p.lat,
+                     lng: p.lng
+                  };
+               });
+               setPartners(mapped);
+            }
+          };
+
+          await fetchPartners();
+          setIsLoading(false);
+
+          // 4. Subscribe to Realtime Updates
+          // Use a random suffix to prevent channel collisions during React Strict Mode double-invocations
+          const channelName = `matchmaking_${dummyUserId}_${Math.random().toString(36).substring(7)}`;
+          subscription = supabase.channel(channelName)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'active_matchmaking' }, (payload) => {
+               // When someone else joins or moves, refetch nearest partners
+               fetchPartners();
+            })
+            .subscribe();
+
+        }, (err) => {
+          console.error("Geolocation error:", err);
+          setIsLoading(false);
+        });
+      } else {
+        console.error("Geolocation is not supported by this browser.");
+        setIsLoading(false);
+      }
+    };
+
+    initMatchmaking();
+
+    return () => {
+       if (subscription) supabase.removeChannel(subscription);
+       // Remove user from matchmaking pool on close
+       supabase.from("active_matchmaking").delete().eq("user_id", dummyUserId).then();
+    }
+  }, [userRole]);
 
   const handleConnect = (partner: any) => {
     setSelectedPartner(partner);
@@ -158,7 +266,7 @@ export function MatchmakingPanel({ userRole, onClose, location = "Slawi" }: { us
                         </div>
 
                         {/* Partner Pins */}
-                        {relevantPartners.map((p, i) => (
+                        {!isLoading && partners.map((p, i) => (
                              <div key={p.id} className="absolute flex flex-col items-center group cursor-pointer" 
                                   style={{ top: `${Math.min(90, Math.max(10, p.mapLat))}%`, left: `${Math.min(90, Math.max(10, p.mapLng))}%`, transform: 'translate(-50%, -50%)' }}
                                   onClick={() => handleConnect(p)}>
@@ -170,34 +278,44 @@ export function MatchmakingPanel({ userRole, onClose, location = "Slawi" }: { us
 
                     {/* Partner List */}
                     <div className="flex-1 overflow-y-auto w-full border-t md:border-t-0 p-4 space-y-4">
-                        <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Mitra Terdekat ({relevantPartners.length})</h3>
-                        <div className="space-y-3 pb-8">
-                            {relevantPartners.length > 0 ? relevantPartners.map((partner) => (
-                                <Card key={partner.id} className="hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors cursor-pointer border-l-4 border-l-transparent hover:border-l-primary group"
-                                      onClick={() => handleConnect(partner)}>
-                                    <div className="p-3 flex items-start gap-3">
-                                        <Avatar className="h-10 w-10 border">
-                                            <AvatarFallback>{partner.avatar}</AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex-1">
-                                            <div className="flex justify-between items-start">
-                                                <h4 className="font-bold text-sm group-hover:text-primary transition-colors">{partner.name}</h4>
-                                                <Badge variant="outline" className="text-xs">{partner.distance}</Badge>
-                                            </div>
-                                            <p className="text-xs text-muted-foreground mt-1">{partner.stock}</p>
-                                            <div className="mt-2 flex items-center gap-2">
-                                                <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">Verified</span>
-                                                <Badge variant="secondary" className="text-[10px] h-5">{partner.category}</Badge>
+                        <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">
+                            Mitra Terdekat {isLoading ? "..." : `(${partners.length})`}
+                        </h3>
+                        
+                        {isLoading ? (
+                            <div className="flex flex-col items-center justify-center py-10 text-muted-foreground">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+                                <p>Mencari mitra di sekitar...</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-3 pb-8">
+                                {partners.length > 0 ? partners.map((partner) => (
+                                    <Card key={partner.id} className="hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors cursor-pointer border-l-4 border-l-transparent hover:border-l-primary group"
+                                          onClick={() => handleConnect(partner)}>
+                                        <div className="p-3 flex items-start gap-3">
+                                            <Avatar className="h-10 w-10 border">
+                                                <AvatarFallback>{partner.avatar}</AvatarFallback>
+                                            </Avatar>
+                                            <div className="flex-1">
+                                                <div className="flex justify-between items-start">
+                                                    <h4 className="font-bold text-sm group-hover:text-primary transition-colors">{partner.name}</h4>
+                                                    <Badge variant="outline" className="text-xs">{partner.distance}</Badge>
+                                                </div>
+                                                <p className="text-xs text-muted-foreground mt-1">{partner.stock}</p>
+                                                <div className="mt-2 flex items-center gap-2">
+                                                    <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">Verified</span>
+                                                    <Badge variant="secondary" className="text-[10px] h-5">{partner.category}</Badge>
+                                                </div>
                                             </div>
                                         </div>
+                                    </Card>
+                                )) : (
+                                    <div className="text-center p-8 text-muted-foreground">
+                                        Tidak ada mitra ditemukan dalam radius 15 km.
                                     </div>
-                                </Card>
-                            )) : (
-                                <div className="text-center p-8 text-muted-foreground">
-                                    Tidak ada mitra ditemukan untuk kategori Anda di wilayah ini.
-                                </div>
-                            )}
-                        </div>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
