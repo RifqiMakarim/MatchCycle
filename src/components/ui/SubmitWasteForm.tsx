@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition, useState } from "react";
-import { submitWasteRequest } from "@/app/actions/matchmaking";
+import { submitMatchmakingRequest } from "@/app/actions/matchmaking";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,7 +21,7 @@ export function SubmitWasteForm() {
     const volume = Number(formData.get("volume"));
     
     startTransition(async () => {
-      const res = await submitWasteRequest(volume);
+      const res = await submitMatchmakingRequest('LIMBAH', 'OFFER', volume);
       if (res?.error) {
         setError(res.error);
       } else {
