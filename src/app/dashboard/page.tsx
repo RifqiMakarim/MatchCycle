@@ -132,17 +132,17 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
       {/* Dashboard Header */}
-      <header className="sticky top-0 z-40 w-full border-b bg-white dark:bg-slate-900 px-6 py-3 flex items-center justify-between shadow-sm">
+      <header className="sticky top-0 z-40 w-full border-b bg-white dark:bg-slate-900 px-4 md:px-6 py-3 flex flex-wrap items-center justify-between shadow-sm gap-y-3">
         <div className="flex items-center gap-2">
           <img src="/logo-MatchCycle.jpeg" alt="Logo" className="h-6 w-6 text-primary" onError={(e) => e.currentTarget.style.display='none'} />
-          <span className="font-bold text-lg hidden sm:inline-block">
-            MatchGate <span className="text-muted-foreground font-normal">| Monitoring</span>
+          <span className="font-bold text-lg">
+            MatchGate <span className="text-muted-foreground font-normal hidden sm:inline-block">| Monitoring</span>
           </span>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-white border rounded-full text-sm font-medium shadow-sm">
-            <div className={`h-2 w-2 rounded-full animate-pulse ${
+        <div className="flex items-center gap-2 md:gap-4 ml-auto">
+          <div className="flex items-center gap-2 px-2 md:px-3 py-1 bg-white border rounded-full text-xs md:text-sm font-medium shadow-sm">
+            <div className={`h-2 w-2 rounded-full animate-pulse shrink-0 ${
               selectedLocation === "Slawi" ? "bg-blue-600" :
               selectedLocation === "Adiwerna" ? "bg-blue-600" :
               selectedLocation === "Talang" ? "bg-orange-600" : "bg-purple-600"
@@ -150,22 +150,22 @@ export default function DashboardPage() {
             <select
               value={selectedLocation}
               onChange={(e) => setSelectedLocation(e.target.value)}
-              className="bg-transparent border-none outline-none text-sm font-medium cursor-pointer"
+              className="bg-transparent border-none outline-none text-xs md:text-sm font-medium cursor-pointer max-w-[80px] md:max-w-none"
             >
               {CITIES.map((loc) => (
                 <option key={loc} value={loc}>
-                  Wilayah: {loc}
+                  {loc}
                 </option>
               ))}
             </select>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="hidden sm:flex" onClick={() => router.push("/profile")}>
-              <User className="h-4 w-4 mr-2" /> Profil
+          <div className="flex items-center gap-1 md:gap-2">
+            <Button variant="outline" size="sm" className="px-2 md:px-3 h-8" onClick={() => router.push("/profile")}>
+              <User className="h-4 w-4 md:mr-2" /> <span className="hidden md:inline">Profil</span>
             </Button>
-            <Button variant="ghost" size="sm" onClick={handleLogout} className="text-muted-foreground hover:text-destructive">
-              <LogOut className="h-4 w-4 sm:mr-2" /> <span className="hidden sm:inline">Keluar</span>
+            <Button variant="ghost" size="sm" onClick={handleLogout} className="px-2 md:px-3 h-8 text-muted-foreground hover:text-destructive">
+              <LogOut className="h-4 w-4 md:mr-2" /> <span className="hidden md:inline">Keluar</span>
             </Button>
           </div>
         </div>
@@ -174,13 +174,13 @@ export default function DashboardPage() {
       <main className="flex-1 container mx-auto p-4 md:p-8 space-y-8 pb-24">
         {/* Welcome Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Halo, {userName}</h1>
-            <p className="text-muted-foreground">
+          <div className="w-full md:w-auto">
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight truncate">Halo, {userName}</h1>
+            <p className="text-muted-foreground text-sm md:text-base">
               Pantau distribusi pangan dan sirkular ekonomi wilayah <span className="font-semibold text-primary">{selectedLocation}</span>.
             </p>
           </div>
-          <Button size="lg" className="shadow-lg animate-bounce-slow bg-blue-600 hover:bg-blue-700" onClick={() => setShowMatchmaking(true)}>
+          <Button size="lg" className="w-full md:w-auto shadow-lg animate-bounce-slow bg-blue-600 hover:bg-blue-700" onClick={() => setShowMatchmaking(true)}>
             <Map className="mr-2 h-5 w-5" /> Cari Mitra (Matchmaking)
           </Button>
         </div>
@@ -275,7 +275,7 @@ export default function DashboardPage() {
               </div>
               <Card className="overflow-hidden">
                 <div className="overflow-x-auto">
-                  <Table>
+                  <Table className="min-w-[500px]">
                     <TableHeader>
                       <TableRow>
                         <TableHead>Nama Mitra</TableHead>

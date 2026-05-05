@@ -171,22 +171,26 @@ export default function ProfilePage() {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div className="p-4 border rounded-lg bg-white shadow-sm">
                                   <div className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-2">{getCapacityLabel()}</div>
-                                  {isEditingCapacity ? (
-                                      <div className="flex items-center gap-2 mt-1">
-                                          <Input 
-                                              type="number" 
-                                              className="w-24 font-bold text-lg h-9" 
-                                              value={newCapacity} 
-                                              onChange={(e) => setNewCapacity(e.target.value)} 
-                                              disabled={isSaving}
-                                          />
-                                          <span className="text-sm text-muted-foreground font-medium mr-2">Kg</span>
-                                          <Button size="sm" onClick={handleSaveCapacity} disabled={isSaving}>
-                                              {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Simpan"}
-                                          </Button>
-                                          <Button size="sm" variant="ghost" onClick={() => setIsEditingCapacity(false)} disabled={isSaving}>Batal</Button>
-                                      </div>
-                                  ) : (
+                                   {isEditingCapacity ? (
+                                       <div className="flex flex-wrap items-center gap-2 mt-1">
+                                           <div className="flex items-center gap-2">
+                                               <Input 
+                                                   type="number" 
+                                                   className="w-24 font-bold text-lg h-9" 
+                                                   value={newCapacity} 
+                                                   onChange={(e) => setNewCapacity(e.target.value)} 
+                                                   disabled={isSaving}
+                                               />
+                                               <span className="text-sm text-muted-foreground font-medium mr-2">Kg</span>
+                                           </div>
+                                           <div className="flex items-center gap-2">
+                                               <Button size="sm" onClick={handleSaveCapacity} disabled={isSaving}>
+                                                   {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Simpan"}
+                                               </Button>
+                                               <Button size="sm" variant="ghost" onClick={() => setIsEditingCapacity(false)} disabled={isSaving}>Batal</Button>
+                                           </div>
+                                       </div>
+                                   ) : (
                                       <div className="flex justify-between items-end mt-1">
                                           <div className="font-bold text-3xl text-primary">{profile.capacity} <span className="text-base text-muted-foreground font-medium">Kg</span></div>
                                           <Button variant="ghost" size="sm" className="h-8 text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-50" onClick={() => { setIsEditingCapacity(true); setNewCapacity(profile.capacity.toString()); }}>

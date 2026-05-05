@@ -259,9 +259,9 @@ export function MatchmakingPanel({ userId, userRole, onClose, location = "Slawi"
             
             {/* STEP 1: MAP VISUALIZATION */}
             {step === "search" && (
-                <div className="flex-1 grid md:grid-cols-2 h-full overflow-hidden">
+                <div className="flex-1 flex flex-col md:grid md:grid-cols-2 h-full overflow-hidden">
                     {/* Map Simulation */}
-                    <div className="bg-slate-100 dark:bg-slate-900 relative h-[300px] md:h-full flex items-center justify-center overflow-hidden border-b md:border-b-0 md:border-r">
+                    <div className="bg-slate-100 dark:bg-slate-900 relative shrink-0 h-[250px] md:h-full flex items-center justify-center overflow-hidden border-b md:border-b-0 md:border-r">
                         {/* Dynamic Map Background */}
                         <div 
                           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-50 dark:opacity-40" 
@@ -351,9 +351,9 @@ export function MatchmakingPanel({ userId, userRole, onClose, location = "Slawi"
 
             {/* STEP 2: NEGOTIATION (FORM + CHAT) */}
             {step === "negotiate" && selectedPartner && (
-                <div className="flex-1 grid md:grid-cols-2 h-full overflow-hidden">
+                <div className="flex-1 flex flex-col md:grid md:grid-cols-2 h-full overflow-hidden overflow-y-auto md:overflow-hidden">
                     {/* Left: Form */}
-                    <div className="p-6 overflow-y-auto border-r bg-slate-50/50">
+                    <div className="p-4 md:p-6 shrink-0 md:h-full overflow-y-auto border-b md:border-b-0 md:border-r bg-slate-50/50">
                         <div className="flex items-center gap-4 mb-6">
                             <Avatar className="h-12 w-12 border-2 border-primary">
                                 <AvatarFallback>{selectedPartner.avatar}</AvatarFallback>
@@ -448,7 +448,7 @@ export function MatchmakingPanel({ userId, userRole, onClose, location = "Slawi"
                     </div>
 
                     {/* Right: Chat */}
-                    <div className="flex flex-col h-full overflow-hidden bg-white">
+                    <div className="flex flex-col flex-1 shrink-0 min-h-[400px] md:min-h-0 md:h-full overflow-hidden bg-white">
                         <div className="p-3 border-b bg-slate-50 flex justify-between items-center">
                             <span className="text-sm font-medium flex items-center gap-2">
                                 <MessageSquare className="h-4 w-4" /> Live Chat

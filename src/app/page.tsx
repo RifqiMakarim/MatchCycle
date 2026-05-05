@@ -279,11 +279,11 @@ export default function LandingPage() {
                            ))}
                        </ul>
 
-                       <div className="pt-4 flex gap-6 items-center">
-                           <img src="/download-playstore.png" alt="download-playstore" className="h-20 hover:scale-105 active:scale-95 duration-200 cursor-pointer" />
+                       <div className="pt-4 flex flex-col sm:flex-row gap-4 sm:gap-6 items-center md:items-start">
+                           <img src="/download-playstore.png" alt="download-playstore" className="h-16 sm:h-20 hover:scale-105 active:scale-95 duration-200 cursor-pointer" />
                               
-                              <Button size="lg" className="bg-blue-500 text-white hover:bg-blue-600 rounded-xl h-14 px-6 transition-all hover:scale-105 active:scale-95 duration-200">
-                                  <a href="https://www.figma.com/proto/dcrgDBdLXAPYbg3MhTBFgL/MATCHGATE?page-id=0%3A1&node-id=1-3&p=f&viewport=185%2C165%2C0.13&t=HQzmShFQFxwa80uX-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=153%3A2" target="_blank" className="flex items-center">
+                              <Button size="lg" className="w-full sm:w-auto bg-blue-500 text-white hover:bg-blue-600 rounded-xl h-14 px-6 transition-all hover:scale-105 active:scale-95 duration-200">
+                                  <a href="https://www.figma.com/proto/dcrgDBdLXAPYbg3MhTBFgL/MATCHGATE?page-id=0%3A1&node-id=1-3&p=f&viewport=185%2C165%2C0.13&t=HQzmShFQFxwa80uX-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=153%3A2" target="_blank" className="flex items-center justify-center w-full">
                                   <Play className="mr-2 h-5 w-5 fill-current" /> Demo Aplikasi
                                   </a>
                             </Button>
