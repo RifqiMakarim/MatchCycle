@@ -16,7 +16,8 @@ const INITIAL_CHATS = [
 ];
 
 import { REGIONAL_ENTITIES, CITY_COORDINATES, RegionalEntity, EntityRole } from "@/lib/regional-data";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/utils/supabase/client";
+import { submitDirectMatch } from "@/app/actions/matchmaking";
 
 type MatchmakingPartner = {
   id: string;
@@ -30,9 +31,11 @@ type MatchmakingPartner = {
   mapLng: number;
   lat?: number;
   lng?: number;
+  is_online?: boolean;
 };
 
-export function MatchmakingPanel({ userRole, onClose, location = "Slawi" }: { userRole: string, onClose: () => void, location?: string }) {
+export function MatchmakingPanel({ userId, userRole, onClose, location = "Slawi" }: { userId: string, userRole: string, onClose: () => void, location?: string }) {
+  const supabase = createClient();
   const [selectedPartner, setSelectedPartner] = useState<MatchmakingPartner | null>(null);
   const [step, setStep] = useState<"search" | "negotiate" | "waiting" | "success">("search");
   
@@ -46,15 +49,6 @@ export function MatchmakingPanel({ userRole, onClose, location = "Slawi" }: { us
   const [partners, setPartners] = useState<MatchmakingPartner[]>([]);
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Generate a unique dummy user ID ONCE per component mount to prevent duplicates in Strict Mode
-  const dummyUserIdRef = useRef<string | null>(null);
-  if (!dummyUserIdRef.current) {
-      dummyUserIdRef.current = typeof crypto !== 'undefined' && crypto.randomUUID 
-        ? crypto.randomUUID() 
-        : Math.random().toString(36).substring(2, 15);
-  }
-  const dummyUserId = dummyUserIdRef.current;
 
   // Initialize Matchmaking
   useEffect(() => {
@@ -81,17 +75,19 @@ export function MatchmakingPanel({ userRole, onClose, location = "Slawi" }: { us
           };
           const userName = mockNames[userRole] || `Mitra ${userRole.replace(/_/g, ' ')}`;
 
-          const { error: upsertError } = await supabase.from("active_matchmaking").upsert({
-             user_id: dummyUserId,
-             name: userName,
-             role: userRole,
-             category: "Umum",
-             location: `POINT(${lng} ${lat})`,
-             status: 'searching'
-          });
+          if (userId) {
+              const { error: upsertError } = await supabase.from("active_matchmaking").upsert({
+                 user_id: userId,
+                 name: userName,
+                 role: userRole,
+                 category: "Umum",
+                 location: `POINT(${lng} ${lat})`,
+                 status: 'searching'
+              });
 
-          if (upsertError) {
-              console.error("Error upserting location:", upsertError.message || JSON.stringify(upsertError));
+              if (upsertError) {
+                  console.error("Error upserting location:", upsertError.message || JSON.stringify(upsertError));
+              }
           }
 
           // Determine Target Roles
@@ -120,7 +116,7 @@ export function MatchmakingPanel({ userRole, onClose, location = "Slawi" }: { us
 
             if (data) {
                // Filter out current user's ID just in case
-               const filteredData = data.filter((p: any) => p.id !== dummyUserId);
+               const filteredData = data.filter((p: any) => p.id !== userId);
                const mapped = filteredData.map((p: any, index: number) => {
                   const angle = index * (Math.PI * 2 / 5);
                   const jitterRadius = 12 + (index % 3) * 5;
@@ -135,7 +131,8 @@ export function MatchmakingPanel({ userRole, onClose, location = "Slawi" }: { us
                      mapLat: 50 + Math.sin(angle) * jitterRadius,
                      mapLng: 50 + Math.cos(angle) * jitterRadius,
                      lat: p.lat,
-                     lng: p.lng
+                     lng: p.lng,
+                     is_online: p.is_online
                   };
                });
                setPartners(mapped);
@@ -146,14 +143,15 @@ export function MatchmakingPanel({ userRole, onClose, location = "Slawi" }: { us
           setIsLoading(false);
 
           // 4. Subscribe to Realtime Updates
-          // Use a random suffix to prevent channel collisions during React Strict Mode double-invocations
-          const channelName = `matchmaking_${dummyUserId}_${Math.random().toString(36).substring(7)}`;
-          subscription = supabase.channel(channelName)
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'active_matchmaking' }, (payload) => {
-               // When someone else joins or moves, refetch nearest partners
-               fetchPartners();
-            })
-            .subscribe();
+          if (userId) {
+              const channelName = `matchmaking_${userId}_${Math.random().toString(36).substring(7)}`;
+              subscription = supabase.channel(channelName)
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'active_matchmaking' }, (payload) => {
+                   // When someone else joins or moves, refetch nearest partners
+                   fetchPartners();
+                })
+                .subscribe();
+          }
 
         }, (err) => {
           console.error("Geolocation error:", err);
@@ -170,9 +168,11 @@ export function MatchmakingPanel({ userRole, onClose, location = "Slawi" }: { us
     return () => {
        if (subscription) supabase.removeChannel(subscription);
        // Remove user from matchmaking pool on close
-       supabase.from("active_matchmaking").delete().eq("user_id", dummyUserId).then();
+       if (userId) {
+           supabase.from("active_matchmaking").delete().eq("user_id", userId).then();
+       }
     }
-  }, [userRole]);
+  }, [userRole, userId, supabase]);
 
   const handleConnect = (partner: any) => {
     setSelectedPartner(partner);
@@ -208,7 +208,26 @@ export function MatchmakingPanel({ userRole, onClose, location = "Slawi" }: { us
       setStep("waiting");
   };
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
+      if (!selectedPartner || !userId) return;
+
+      // 1. Determine Item Type
+      let itemType = 'LIMBAH';
+      if (transactionDetails.productType) {
+          itemType = transactionDetails.productType.toUpperCase();
+      } else if (selectedPartner.role === 'peternak_manggot' && transactionDetails.quantity) {
+          itemType = 'MAGGOT';
+      }
+
+      // 2. Volume
+      const volume = parseInt(transactionDetails.quantity) || 45;
+
+      // 3. Submit Match using Server Action
+      const result = await submitDirectMatch(selectedPartner.id, itemType, volume);
+      if (result.error) {
+          console.error("Match error:", result.error);
+      }
+
       setStep("success");
   };
 
@@ -302,8 +321,17 @@ export function MatchmakingPanel({ userRole, onClose, location = "Slawi" }: { us
                                                     <Badge variant="outline" className="text-xs">{partner.distance}</Badge>
                                                 </div>
                                                 <p className="text-xs text-muted-foreground mt-1">{partner.stock}</p>
-                                                <div className="mt-2 flex items-center gap-2">
-                                                    <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">Verified</span>
+                                                <div className="mt-2 flex flex-wrap items-center gap-2">
+                                                    {partner.is_online ? (
+                                                        <span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded flex items-center gap-1 border border-green-200">
+                                                            <span className="h-1.5 w-1.5 bg-green-500 rounded-full animate-pulse"></span> Online
+                                                        </span>
+                                                    ) : (
+                                                        <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded flex items-center gap-1 border border-slate-200">
+                                                            <span className="h-1.5 w-1.5 bg-slate-400 rounded-full"></span> Standby
+                                                        </span>
+                                                    )}
+                                                    <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded border border-blue-200">Verified</span>
                                                     <Badge variant="secondary" className="text-[10px] h-5">{partner.category}</Badge>
                                                 </div>
                                             </div>

@@ -3,34 +3,27 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Recycle, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-
-const ROLES = [
-  { id: "mitra_sisa_pangan_sppg", label: "Mitra Sisa Pangan (SPPG)" },
-  { id: "mitra_sisa_pangan_sekolah", label: "Mitra Sisa Pangan (Sekolah)" },
-  { id: "mitra_energy", label: "Mitra Waste-to-Energy" },
-  { id: "peternak_hewan", label: "Peternak Hewan" },
-  { id: "peternak_manggot", label: "Peternak Manggot" },
-];
+import { useState, useTransition } from "react";
+import { login } from "@/app/actions/auth";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [selectedRole, setSelectedRole] = useState(ROLES[0].id);
-  const [loading, setLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
-    // Simulate login delay
-    setTimeout(() => {
-        // Store selected role for the session
-        localStorage.setItem("userRole", selectedRole);
-        router.push("/dashboard");
-    }, 800);
+    setError(null);
+    const formData = new FormData(e.currentTarget);
+    
+    startTransition(async () => {
+      const res = await login(formData);
+      if (res?.error) {
+        setError(res.error);
+      }
+    });
   };
 
   return (
@@ -53,35 +46,29 @@ export default function LoginPage() {
         </CardHeader>
         <form onSubmit={handleLogin}>
             <CardContent className="space-y-4">
+            {error && (
+              <div className="rounded-md bg-red-50 p-4 text-sm text-red-700 dark:bg-red-900/50 dark:text-red-200">
+                {error}
+              </div>
+            )}
             <div className="space-y-2">
-                <Label htmlFor="role">Pilih Role Pengguna</Label>
-                <select 
-                    id="role"
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    value={selectedRole}
-                    onChange={(e) => setSelectedRole(e.target.value)}
-                >
-                    {ROLES.map((role) => (
-                        <option key={role.id} value={role.id}>{role.label}</option>
-                    ))}
-                </select>
-            </div>
-            <div className="space-y-2">
-                <Label htmlFor="email">Email Dinas / Instansi</Label>
-                <Input id="email" placeholder="contoh@MatchCycle.id" type="email" required />
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" name="email" placeholder="contoh@MatchCycle.id" type="email" required />
             </div>
             <div className="space-y-2 pb-6">
                 <div className="flex justify-between items-center">
                     <Label htmlFor="password">Password</Label>
-                    <Link href="#" className="text-xs text-primary hover:underline">Lupa password?</Link>
                 </div>
-                <Input id="password" type="password" placeholder="••••••••" required />
+                <Input id="password" name="password" type="password" placeholder="••••••••" required />
             </div>
             </CardContent>
-            <CardFooter>
-                <Button className="w-full" size="lg" type="submit" disabled={loading}>
-                    {loading ? "Memproses..." : "Masuk"}
+            <CardFooter className="flex flex-col space-y-4">
+                <Button className="w-full" size="lg" type="submit" disabled={isPending}>
+                    {isPending ? "Memproses..." : "Masuk"}
                 </Button>
+                <div className="text-sm text-center text-muted-foreground">
+                    Belum punya akun? <Link href="/register" className="text-primary hover:underline">Daftar</Link>
+                </div>
             </CardFooter>
         </form>
       </Card>

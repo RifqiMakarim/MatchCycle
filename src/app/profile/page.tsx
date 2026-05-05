@@ -6,74 +6,96 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Mail, Phone, MapPin, Building, BadgeCheck, School, Utensils } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { ArrowLeft, Mail, Phone, MapPin, Building, BadgeCheck, School, Utensils, Loader2, Edit2 } from "lucide-react";
 
-import { REGIONAL_ENTITIES, RegionalEntity } from "@/lib/regional-data";
+import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
 export default function ProfilePage() {
-  const [userRole, setUserRole] = useState("admin");
+  const router = useRouter();
+  const supabase = createClient();
+  const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<any>(null);
+  
+  const [isEditingCapacity, setIsEditingCapacity] = useState(false);
+  const [newCapacity, setNewCapacity] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
-    const role = localStorage.getItem("userRole");
-    if (role) setUserRole(role);
-  }, []);
-
-  const isSppg = userRole === "sppg" || userRole.includes("sppg");
-  const isSchool = userRole === "school" || userRole === "sekolah" || userRole.includes("sekolah");
-
-  // Dynamic Profile Data
-  const getProfileData = () => {
-    // Find a real entity from our data to use as the profile
-    let entity: RegionalEntity | undefined;
-
-    if (isSppg) {
-      entity = REGIONAL_ENTITIES.find(e => e.role === "sppg");
-    } else if (isSchool) {
-       // Prioritize Slawi schools as requested
-       entity = REGIONAL_ENTITIES.find(e => e.role === "sekolah" && e.city === "Slawi") || 
-                REGIONAL_ENTITIES.find(e => e.role === "sekolah");
+  const handleSaveCapacity = async () => {
+    if (!profile) return;
+    setIsSaving(true);
+    const capacityNum = parseInt(newCapacity);
+    if (isNaN(capacityNum) || capacityNum < 0) {
+       setIsSaving(false);
+       return;
+    }
+    
+    const { error } = await supabase.from('users').update({ capacity: capacityNum }).eq('id', profile.id);
+    if (!error) {
+       setProfile({ ...profile, capacity: capacityNum });
+       setIsEditingCapacity(false);
     } else {
-        // Map other roles
-        const mapRole = userRole === "peternak_manggot" ? "peternak_manggot" : 
-                        userRole === "peternak_hewan" ? "peternak_hewan" : 
-                        userRole === "mitra_energy" ? "waste_to_energy" : undefined;
-        if (mapRole) {
-            entity = REGIONAL_ENTITIES.find(e => e.role === mapRole);
-        }
+       console.error("Error updating capacity:", error);
     }
-
-    // Default Fallback
-    if (!entity) {
-        return {
-            name: "Admin User",
-            type: "Administrator",
-            email: "admin@matchgate.id",
-            phone: "+62 812-3456-7890",
-            location: "Slawi, Tegal, Indonesia",
-            capacityLabel: "Role",
-            capacityValue: "Super Admin",
-            icon: Building,
-            avatarSrc: "/logo-matchgate.png"
-        };
-    }
-
-    return {
-      name: entity.name,
-      type: entity.category,
-      email: `admin@${entity.id.split('-')[0]}.matchgate.id`,
-      phone: "+62 812-9988-7766",
-      location: `${entity.address}, ${entity.city}`, 
-      capacityLabel: isSchool ? "Jumlah Siswa" : "Kapasitas Harian",
-      capacityValue: isSchool ? "1,200 Siswa" : `${entity.wasteStock} Kg`,
-      secondaryLabel: "Status Operasional",
-      secondaryValue: entity.status,
-      icon: isSppg ? Utensils : isSchool ? School : Building,
-      avatarSrc: isSppg ? "/sppg-logo.png" : isSchool ? "/tutwuri-logo.png" : "/logo-matchgate.png"
-    };
+    setIsSaving(false);
   };
 
-  const profile = getProfileData();
-  const Icon = profile.icon;
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) {
+        router.push("/login");
+        return;
+      }
+
+      const { data: userData } = await supabase.from("users").select("*").eq("id", user.id).single();
+      
+      if (userData) {
+        setProfile({
+          ...userData,
+          email: user.email,
+          createdAt: user.created_at,
+        });
+      }
+      setLoading(false);
+    };
+
+    fetchProfile();
+  }, [router, supabase]);
+
+  if (loading) {
+      return (
+          <div className="min-h-screen flex items-center justify-center bg-slate-50">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+      )
+  }
+
+  if (!profile) return null;
+
+  const isSppg = profile.role === "sppg";
+  const isSchool = profile.role === "sekolah";
+  const Icon = isSppg ? Utensils : isSchool ? School : Building;
+  const avatarSrc = isSppg ? "/sppg-logo.png" : isSchool ? "/tutwuri-logo.png" : "/logo-matchgate.png";
+
+  const getCapacityLabel = () => {
+    if (isSchool) return "Kapasitas Limbah Harian";
+    if (isSppg) return "Kapasitas Sisa Pangan";
+    if (profile.role === 'waste_to_energy') return "Kapasitas Serap Limbah";
+    return "Kapasitas Produksi / Stok";
+  };
+
+  const getRoleDisplayName = (role: string) => {
+      const names: Record<string, string> = {
+          'sppg': 'Mitra SPPG',
+          'sekolah': 'Institusi Pendidikan (Sekolah)',
+          'peternak_manggot': 'Peternakan Maggot',
+          'peternak_hewan': 'Peternakan Hewan',
+          'waste_to_energy': 'Mitra Waste-to-Energy'
+      };
+      return names[role] || role;
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
@@ -89,18 +111,20 @@ export default function ProfilePage() {
       
       <main className="flex-1 container mx-auto p-4 md:p-8 flex flex-col items-center">
          <Card className="w-full max-w-2xl overflow-hidden">
-             <div className="h-32 bg-primary/10 w-full"></div>
+             <div className="h-32 bg-primary/10 w-full relative">
+                 <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(#444 1px, transparent 1px)", backgroundSize: "20px 20px" }}></div>
+             </div>
              <div className="px-8 pb-8">
                  <div className="relative -mt-16 mb-6 flex justify-between items-end">
                      <div className="rounded-full p-2 bg-white dark:bg-slate-900 shadow-xl">
                         <Avatar className="h-32 w-32 border-4 border-white dark:border-slate-900">
-                            <AvatarImage src={profile.avatarSrc} alt={profile.name} className="object-cover bg-white" />
+                            <AvatarImage src={avatarSrc} alt={profile.name} className="object-cover bg-white p-2" />
                             <AvatarFallback className="text-4xl bg-primary text-white">
                                 <Icon className="h-12 w-12" />
                             </AvatarFallback>
                         </Avatar>
                      </div>
-                     <Button>Edit Profil</Button>
+                     <Button variant="outline">Edit Profil</Button>
                  </div>
                  
                  <div className="space-y-6">
@@ -110,9 +134,9 @@ export default function ProfilePage() {
                              <BadgeCheck className="h-6 w-6 text-blue-500" />
                          </h1>
                          <p className="text-muted-foreground flex items-center gap-2 mt-1">
-                             <MapPin className="h-4 w-4" /> {profile.location}
+                             <MapPin className="h-4 w-4" /> {profile.address}, {profile.city}
                          </p>
-                         <Badge className="mt-2" variant="secondary">{profile.type}</Badge>
+                         <Badge className="mt-3 text-sm px-3 py-1" variant="secondary">{getRoleDisplayName(profile.role)}</Badge>
                      </div>
                      
                      <div className="grid md:grid-cols-2 gap-4">
@@ -123,12 +147,8 @@ export default function ProfilePage() {
                                      <span className="text-sm">{profile.email}</span>
                                  </div>
                                  <div className="flex items-center gap-3">
-                                     <Phone className="h-5 w-5 text-muted-foreground" />
-                                     <span className="text-sm">{profile.phone}</span>
-                                 </div>
-                                 <div className="flex items-center gap-3">
                                      <Building className="h-5 w-5 text-muted-foreground" />
-                                     <span className="text-sm">Terdaftar sejak Jan 2026</span>
+                                     <span className="text-sm">Terdaftar: {new Date(profile.createdAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long' })}</span>
                                  </div>
                              </CardContent>
                          </Card>
@@ -137,16 +157,8 @@ export default function ProfilePage() {
                             <CardContent className="p-4">
                                 <h3 className="font-semibold mb-2">Statistik Kontribusi</h3>
                                 <ul className="space-y-2 text-sm">
-                                    <li className="flex justify-between">
-                                        <span>Total Transaksi</span>
-                                        <span className="font-bold">128</span>
-                                    </li>
-                                    <li className="flex justify-between">
-                                        <span>Rating</span>
-                                        <span className="font-bold text-yellow-600">4.9/5.0</span>
-                                    </li>
-                                    <li className="flex justify-between">
-                                        <span>Status Akun</span>
+                                    <li className="flex justify-between items-center">
+                                        <span className="text-muted-foreground">Status Akun</span>
                                         <Badge variant="secondary" className="bg-blue-100 text-blue-700 hover:bg-blue-100">Verified Partner</Badge>
                                     </li>
                                 </ul>
@@ -157,13 +169,35 @@ export default function ProfilePage() {
                      <div className="pt-6 border-t">
                          <h3 className="font-semibold mb-4">Informasi Operasional</h3>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div className="p-3 border rounded-lg">
-                                  <div className="text-xs text-muted-foreground">{profile.capacityLabel}</div>
-                                  <div className="font-bold text-lg">{profile.capacityValue}</div>
+                              <div className="p-4 border rounded-lg bg-white shadow-sm">
+                                  <div className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-2">{getCapacityLabel()}</div>
+                                  {isEditingCapacity ? (
+                                      <div className="flex items-center gap-2 mt-1">
+                                          <Input 
+                                              type="number" 
+                                              className="w-24 font-bold text-lg h-9" 
+                                              value={newCapacity} 
+                                              onChange={(e) => setNewCapacity(e.target.value)} 
+                                              disabled={isSaving}
+                                          />
+                                          <span className="text-sm text-muted-foreground font-medium mr-2">Kg</span>
+                                          <Button size="sm" onClick={handleSaveCapacity} disabled={isSaving}>
+                                              {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Simpan"}
+                                          </Button>
+                                          <Button size="sm" variant="ghost" onClick={() => setIsEditingCapacity(false)} disabled={isSaving}>Batal</Button>
+                                      </div>
+                                  ) : (
+                                      <div className="flex justify-between items-end mt-1">
+                                          <div className="font-bold text-3xl text-primary">{profile.capacity} <span className="text-base text-muted-foreground font-medium">Kg</span></div>
+                                          <Button variant="ghost" size="sm" className="h-8 text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-50" onClick={() => { setIsEditingCapacity(true); setNewCapacity(profile.capacity.toString()); }}>
+                                              <Edit2 className="h-3 w-3 mr-1" /> Edit
+                                          </Button>
+                                      </div>
+                                  )}
                               </div>
-                              <div className="p-3 border rounded-lg">
-                                  <div className="text-xs text-muted-foreground">{profile.secondaryLabel || "Jam Operasional"}</div>
-                                  <div className="font-bold text-lg">{profile.secondaryValue || "08:00 - 17:00"}</div>
+                              <div className="p-3 border rounded-lg bg-white">
+                                  <div className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Wilayah Operasional</div>
+                                  <div className="font-bold text-lg mt-1">{profile.city}</div>
                               </div>
                           </div>
                      </div>

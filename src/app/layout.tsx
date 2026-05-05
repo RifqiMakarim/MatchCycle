@@ -14,10 +14,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "MatchGATE",
-  description: "MATCHGATE: SISTEM DIGITAL BERBASIS MATCHMAKING SEBAGAI SOLUSI PERMASALAHAN FOOD WASTE PADA PROGRAM MBG MELALUI PENDEKATAN EKONOMI SIRKULAR UNTUK MENCAPAI SDGS 2030",
+  description: "MATCHCYCLE: SISTEM DIGITAL BERBASIS MATCHMAKING SEBAGAI SOLUSI PERMASALAHAN FOOD WASTE PADA PROGRAM MBG MELALUI PENDEKATAN EKONOMI SIRKULAR UNTUK MENCAPAI SDGS 2030",
   icons: {
-    icon: "/logo-matchgate.png",
-    apple: "/logo-matchgate.png",
+    icon: "/logo-MatchCycle.jpeg",
+    apple: "/logo-MatchCycle.jpeg",
   },
 };
 

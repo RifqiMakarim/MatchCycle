@@ -283,7 +283,7 @@ export default function LandingPage() {
                            <img src="/download-playstore.png" alt="download-playstore" className="h-20 hover:scale-105 active:scale-95 duration-200 cursor-pointer" />
                               
                               <Button size="lg" className="bg-blue-500 text-white hover:bg-blue-600 rounded-xl h-14 px-6 transition-all hover:scale-105 active:scale-95 duration-200">
-                                  <a href="https://www.figma.com/proto/dcrgDBdLXAPYbg3MhTBFgL/LOMBA-BANDUNG?page-id=0%3A1&node-id=27-278&p=f&viewport=282%2C-390%2C0.34&t=uC72KklrnUKhp570-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=1%3A3" target="_blank" className="flex items-center">
+                                  <a href="https://www.figma.com/proto/dcrgDBdLXAPYbg3MhTBFgL/MATCHGATE?page-id=0%3A1&node-id=1-3&p=f&viewport=185%2C165%2C0.13&t=HQzmShFQFxwa80uX-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=153%3A2" target="_blank" className="flex items-center">
                                   <Play className="mr-2 h-5 w-5 fill-current" /> Demo Aplikasi
                                   </a>
                             </Button>
