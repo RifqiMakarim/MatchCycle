@@ -106,7 +106,8 @@ export function MatchmakingPanel({ userId, userRole, onClose, location = "Slawi"
               user_lat: lat,
               user_lng: lng,
               search_radius_meters: 15000, // Search within 15 km
-              target_roles: targetRoles
+              target_roles: targetRoles,
+              p_city: location
             });
 
             if (error) {
@@ -124,7 +125,7 @@ export function MatchmakingPanel({ userId, userRole, onClose, location = "Slawi"
                      id: p.id,
                      name: p.name,
                      role: p.role,
-                     category: p.category || "General",
+                     // category: p.category || "General",
                      stock: p.stock || "Tersedia",
                      avatar: p.name.substring(0, 2).toUpperCase(),
                      distance: (p.distance / 1000).toFixed(1) + " km",

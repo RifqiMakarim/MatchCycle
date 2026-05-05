@@ -98,12 +98,14 @@ ALTER TABLE public.active_matchmaking ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Enable all for active_matchmaking" ON public.active_matchmaking FOR ALL USING (true) WITH CHECK (true);
 
 DROP FUNCTION IF EXISTS public.find_nearest_partners(double precision, double precision, double precision, text[]);
+DROP FUNCTION IF EXISTS public.find_nearest_partners(double precision, double precision, double precision, text[], text);
 
 CREATE OR REPLACE FUNCTION public.find_nearest_partners(
     user_lat double precision,
     user_lng double precision,
     search_radius_meters double precision,
-    target_roles text[]
+    target_roles text[],
+    p_city text DEFAULT NULL
 )
 RETURNS TABLE (
     id uuid,
@@ -131,6 +133,7 @@ BEGIN
         FROM public.active_matchmaking a
         JOIN public.users u ON u.id = a.user_id
         WHERE u.role::text = ANY(target_roles)
+          AND (p_city IS NULL OR u.city = p_city)
     ),
     offline_users AS (
         SELECT 
@@ -141,6 +144,7 @@ BEGIN
             false as is_online
         FROM public.users u
         WHERE u.role::text = ANY(target_roles)
+          AND (p_city IS NULL OR u.city = p_city)
           AND u.id NOT IN (SELECT ou.id FROM online_users ou)
         ORDER BY random()
         LIMIT 5
