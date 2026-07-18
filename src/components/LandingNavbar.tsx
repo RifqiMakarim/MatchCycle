@@ -46,7 +46,7 @@ export function LandingNavbar() {
             <span className={`font-bold text-xl tracking-tight transition-colors ${
                 isScrolled ? "text-slate-900" : "text-white"
             }`}>
-              <span className="text-blue-400">Match</span><span className="text-blue-400">Cycle</span>
+              <span className="text-blue-400">SIR</span><span className="text-blue-400">CLE</span>
             </span>
           </Link>
 
